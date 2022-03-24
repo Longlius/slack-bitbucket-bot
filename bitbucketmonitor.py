@@ -36,7 +36,6 @@ class BitBucketMonitor:
 			while nextPageUrl is not None:
 				response = requests.request("GET", nextPageUrl, auth=HTTPBasicAuth(self.bitbucketuser, self.bitbucketpass))
 				responseParsed = json.loads(response.text)
-				print(responseParsed)
 				for j in responseParsed["values"]:
 					acc.append((i, j["id"], j["links"]["html"]))
 				nextPageUrl = responseParsed.get('next', None)
@@ -58,10 +57,12 @@ class BitBucketMonitor:
 		self.commentslist = acc
 	
 	# okay this next part is going to be hella hacky because bitbucket's api is terrible
+	# there is no way to directly ask bitbucket which comments don't have responses
+	# so we cheat and use basic set operations
 	# we need to find all top-level comments without responses
 	# logically
 	# T = {all comments C st C does not have a parent AND there does not exist a comment C' whose parent is C}
-	# In this case, T is the set of all comments that have not been responded to
+	# In this case, T is the set of all top-level comments that have not been responded to
 	
 	# first let's get all top-level comments
 	# that is to say - all comments without parents
@@ -86,6 +87,40 @@ class BitBucketMonitor:
 				if i[1]['id'] == j:
 					self.toplevelcomments.remove(i)
 	
-	def getUnrespondedComments(self):
-		return self.toplevelcomments
+	# This method runs the entire pipeline for easier invocation outside the class
+	# After running this method, self.toplevelcomments will only contain top-level comments that have not been responded to
+	def unrespondedCommentsPipeline(self):
+		self.populateRepoSlugList()
+		self.populatePullRequestsList()
+		self.populateCommentsList()
+		self.topLevelComments()
+		self.unrespondedComments()
 		
+	# okay now we must take this list and build a list of pull requests
+	def preparePullRequestListForOutput(self):
+		acc1 = []
+		for i in self.toplevelcomments:
+			acc1.append((i[0][2]["href"], i[1]['pullrequest']['links']['self']['href']))
+		#using the api endpoint, we'll pull down a display name and add it to the tuple
+		acc2 = []
+		for i in acc1:
+			response = requests.request("GET", i[1], auth=HTTPBasicAuth(self.bitbucketuser, self.bitbucketpass))
+			responseParsed = json.loads(response.text)
+			acc2.append((i[0], i[1], responseParsed['author']['display_name']))
+		# finally count and remove duplicates
+		acc3 = []
+		for i in acc2:
+			count = 0
+			for j in acc2:
+				if count == 0:
+					count = count + 1
+				elif i[0] == j[0]:
+					count = count + 1
+					acc2.remove(j)
+			acc3.append((i[0], i[1], i[2], count))
+		self.finalpullrequestlist = acc3
+		
+	# return this cursed thing we've created
+	def getFinalPullRequestList(self):
+		return self.finalpullrequestlist
+				
