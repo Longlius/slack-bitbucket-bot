@@ -15,15 +15,11 @@ class BitBucketMonitor:
 			self.bitbucketpass = os.environ.get("BITBUCKET_PASS")
 		self.workspace = workspace
 		self.commentswithoutresponse = []
-					
-	def printRepositories(self):
-		response = requests.request("GET", self.BITBUCKETURL+'repositories/Longlius?pagelen=100', auth=HTTPBasicAuth(self.bitbucketuser, self.bitbucketpass))
-		print(json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": ")))
 		
 	# Populates a state variable to hold a list of all repository slugs so we don't have to constantly keep sending GET requests
 	def populateRepoSlugList(self):
 		acc = []
-		nextPageUrl = self.BITBUCKETURL+'repositories/'+self.workspace+'?pagelen=100'
+		nextPageUrl = self.BITBUCKETURL+'repositories/'+self.workspace
 		while nextPageUrl is not None:
 			response = requests.request("GET", nextPageUrl, auth=HTTPBasicAuth(self.bitbucketuser, self.bitbucketpass))
 			responseParsed = json.loads(response.text)
@@ -36,10 +32,11 @@ class BitBucketMonitor:
 	def populatePullRequestsList(self):
 		acc = []
 		for i in self.reposluglist:
-			nextPageUrl = self.BITBUCKETURL + 'repositories/' + self.workspace + '/' + i + '/pullrequests?pagelen=100'
+			nextPageUrl = self.BITBUCKETURL + 'repositories/' + self.workspace + '/' + i + '/pullrequests'
 			while nextPageUrl is not None:
 				response = requests.request("GET", nextPageUrl, auth=HTTPBasicAuth(self.bitbucketuser, self.bitbucketpass))
 				responseParsed = json.loads(response.text)
+				print(responseParsed)
 				for j in responseParsed["values"]:
 					acc.append((i, j["id"], j["links"]["html"]))
 				nextPageUrl = responseParsed.get('next', None)
@@ -51,11 +48,11 @@ class BitBucketMonitor:
 		# oh boy
 		for i in self.pullrequestlist:
 			# may god have mercy on my soul
-			nextPageUrl = self.BITBUCKETURL + 'repositories/' + self.workspace + '/' + i[0] + '/pullrequests/' + i[1] + '/comments?pagelen=100'
+			nextPageUrl = self.BITBUCKETURL + 'repositories/' + self.workspace + '/' + str(i[0]) + '/pullrequests/' + str(i[1]) + '/comments'
 			while nextPageUrl is not None:
 				response = requests.request("GET", nextPageUrl, auth=HTTPBasicAuth(self.bitbucketuser, self.bitbucketpass))
 				responseParsed = json.loads(response.text)
-				for j in reponseParsed["values"]:
+				for j in responseParsed["values"]:
 					acc.append((i, j))
 				nextPageUrl = responseParsed.get('next', None)
 		self.commentslist = acc
@@ -89,5 +86,6 @@ class BitBucketMonitor:
 				if i[1]['id'] == j:
 					self.toplevelcomments.remove(i)
 	
-	
+	def getUnrespondedComments(self):
+		return self.toplevelcomments
 		
