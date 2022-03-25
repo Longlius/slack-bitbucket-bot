@@ -11,7 +11,7 @@ pip install schedule
 ```
 
 ## config.json
-config.json describes the local configuration for the bot. It has three required fields:
+`config.json` describes the local configuration for the bot. It has three required fields:
 
 1. `workspaces` - This is an array of strings. Each string corresponds to a BitBucket workspace to monitor.
 2. `channel` - This is a single string. It corresponds to the slack channel the bot will post digests in.
@@ -28,6 +28,8 @@ For example, if we wanted to get information about workspace `Longlius` at noon 
 	"time": "12:00"
 }
 ```
+
+**`config.json` should be placed in the same directory as `main.py`**
 
 ## Setting up the Slack integration
 Currently the bot only works for one (1) slack workspace at a time. I don't feel like setting up a full OAuth flow so if you want more, just run multiple instances of the bot.
