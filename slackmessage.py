@@ -4,12 +4,8 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 class SlackMessage:
-	#Token is the OAuth token. Class currently only supports single slack workspace configuration
-	def __init__(self, clientId = None, clientSecret = None, botOAuth = None):
-		if(clientId is None):
-			self.clientId = os.environ.get('SLACK_CLIENT_ID')
-		if(clientSecret is None):
-			self.clientSecret = os.environ.get('SLACK_CLIENT_SECRET')
+	#botOAuth is the OAuth token. Class currently only supports single slack workspace configuration
+	def __init__(self, botOAuth = None):
 		if(botOAuth is None):
 			self.botOAuth = os.environ.get('SLACK_OAUTH')
 		self.client = WebClient(token=self.botOAuth)
