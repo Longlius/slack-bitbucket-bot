@@ -46,4 +46,19 @@ export SLACK_OAUTH=someoauthkeyorsomethingidunno
 
 The bot is now ready to send messages to Slack.
 
-## Setting up the Bitbucket integration.
+## Setting up the Bitbucket integration
+
+You will need a Bitbucket username and a corresponding app password with the correct permissions. Navigate to the [app password page](https://bitbucket.org/account/settings/app-passwords/) on your profile and create a new app password.
+
+Enable read permissions for Projects, Repositories, Pull Requests, Account, Workspace Membership, and Issues. Give the app password a name and write it down.
+
+Add both your bitbucket username and app password to the `BITBUCKET_USER` and `BITBUCKET_PASS` environment variables respectively, or add the following lines to the `.env` file:
+
+```sh
+export BITBUCKET_USER=SomeUser
+export BITBUCKET_PASS=SomeAppPassword
+```
+
+## Running the bot
+
+You can either run `main.py` directly with the correct environment variables defined or, if using `.env`, you can execute the included `run.sh` script to pull the environment variables in and run the bot with the correct command-line arguments.
