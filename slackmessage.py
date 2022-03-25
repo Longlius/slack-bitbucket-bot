@@ -20,3 +20,15 @@ class SlackMessage:
 			response = self.client.chat_postMessage(channel=channelName, text=message)
 		except SlackApiError as e:
 			assert e.response["error"]
+			
+	# Sends a block message of markdown
+	# markdownarr should be an array of markdown strings to send as individual blocks
+	def sendBitbucketMarkdownBlock(self, channelName, messagesArr):
+		blockarr = []
+		for i in messagesArr:
+			x = { "type": "section", "text": { "type": "mrkdwn", "text": i } }
+			blockarr.append(x)
+		try:
+			response = self.client.chat_postMessage(channel=channelName, blocks=blockarr)
+		except SlackApiError as e:
+			assert e.response["error"]

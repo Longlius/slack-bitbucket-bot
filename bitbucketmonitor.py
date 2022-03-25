@@ -123,4 +123,4 @@ class BitBucketMonitor:
 	# return this cursed thing we've created
 	def getFinalPullRequestList(self):
 		return self.finalpullrequestlist
-				
+
