@@ -34,4 +34,16 @@ For example, if we wanted to get information about workspace `Longlius` at noon 
 ## Setting up the Slack integration
 Currently the bot only works for one (1) slack workspace at a time. I don't feel like setting up a full OAuth flow so if you want more, just run multiple instances of the bot.
 
+First go to the [Slack Apps Page](https://api.slack.com/apps) and click **Create New App**
 
+Then go to **OAuth and Permissions** on the new app's dashboard and enable the `chat:write` and `chat:write.public` permissions.
+
+Finally go to **Install App** and install the app to your workspace. The provided OAuth token should be exported as the environment variable `SLACK_OAUTH`. Add the following line to `.env` in the same directory as `main.py`:
+
+```sh
+export SLACK_OAUTH=someoauthkeyorsomethingidunno
+```
+
+The bot is now ready to send messages to Slack.
+
+## Setting up the Bitbucket integration.
