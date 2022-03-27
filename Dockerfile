@@ -19,7 +19,7 @@ COPY --from=builder /app/requirements.txt .
 
 RUN pip install --no-cache /wheels/*
 RUN addgroup --system app && adduser --system --group app
-USER APP
+USER app
 
 
 COPY *.py ./
