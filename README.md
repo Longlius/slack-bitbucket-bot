@@ -1,6 +1,29 @@
 # slack-bitbucket-bot
 A python 3 bot for posting updates about unanswered comments on bitbucket in a slack channel.
 
+# Docker instructions
+## Slack and Bitbucket setup
+If you haven't already you will need to [Create a new Slack app](#setting-up-theslack-integration) with appropriate permissions. Additionally you will need to create a [Bitbucket App password](#setting-up-the-bitbucket-integration) with the appropriate permissions.
+
+## Environment variables
+See .env.example. Otherwise your .env should look like so:
+
+```sh
+SLACK_OAUTH=someoauthkeyorsomethingidunno
+SLACK_CHANNEL=engineeering
+BITBUCKET_USER=SomeUser
+BITBUCKET_PASS=SomeAppPassword
+BITBUCKET_WORKSPACES=BitbucketWorkspace1,BitbucketWorkspace2
+POST_TIME=12:00
+```
+
+## Build and Run
+``sh
+docker build -t slack-bb-bot .
+docker run -e .env slack-bb-bot
+``
+
+# Non-docker instructions
 ## Python dependencies
 Install the following dependencies via pip:
 
@@ -21,11 +44,11 @@ For example, if we wanted to get information about workspace `Longlius` at noon 
 
 ```json
 {
-	"workspaces": [
-		"Longlius"
+	"bitbucket_workspaces": [
+		"BitbucketWorkspace1"
 	],
-	"channel": "engineering",
-	"time": "12:00"
+	"slack_channel": "engineering",
+	"post_time": "12:00"
 }
 ```
 
