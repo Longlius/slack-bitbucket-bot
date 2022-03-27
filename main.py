@@ -14,7 +14,7 @@ def main():
 	channel = ""
 	jobTime = ""
 
-	isEnvConfigPresent = len(os.environ.get("BITBUCKET_WORKSPACES")) > 0 and len(os.environ.get("SLACK_CHANNEL")) > 0 and len(os.environ.get("POST_TIME")) > 0
+	isEnvConfigPresent = os.environ.get("BITBUCKET_WORKSPACES") and os.environ.get("SLACK_CHANNEL") and os.environ.get("POST_TIME")
 
 	# Get config from environment vars or config.json
 	if isEnvConfigPresent:
