@@ -16,11 +16,12 @@ BITBUCKET_PASS=SomeAppPassword
 BITBUCKET_WORKSPACES=BitbucketWorkspace1,BitbucketWorkspace2
 POST_TIME=12:00
 ```
+*POST_TIME is in UTC*
 
 ## Build and Run
 ``sh
 docker build -t slack-bb-bot .
-docker run -e .env slack-bb-bot
+docker run --env-file .env slack-bb-bot
 ``
 
 # Non-docker instructions
